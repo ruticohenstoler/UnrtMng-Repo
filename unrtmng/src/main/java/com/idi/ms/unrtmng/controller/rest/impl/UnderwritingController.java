@@ -101,7 +101,9 @@ public class UnderwritingController {
         try {
             File file = getOrCreateFile("underwriting_decisions.json", "[]");
             List<UnderwritingDecision> allDecisions = objectMapper.readValue(file, new TypeReference<List<UnderwritingDecision>>(){});
-            decision.setTab(tab);
+            if (decision.getTab() == null || decision.getTab().isEmpty()) {
+                decision.setTab(tab);
+            }
             allDecisions.add(decision);
             objectMapper.writeValue(file, allDecisions);
             return ResponseEntity.ok().build();
