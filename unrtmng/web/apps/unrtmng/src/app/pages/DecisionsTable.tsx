@@ -146,9 +146,14 @@ const DecisionsTable: React.FC = () => {
         ? `/ms/rest/unrtmng/decisions/${editingDecision.id}`
         : '/ms/rest/unrtmng/decisions';
       const method = editingDecision ? 'PUT' : 'POST';
-      const body = editingDecision
-        ? { id: editingDecision.id, tab: selectedTab.id, values: formData }
-        : { id: undefined, tab: selectedTab.id, values: formData };
+      const body: any = {
+        id: editingDecision?.id,
+        tab: selectedTab.id,
+        values: formData
+      };
+      if (editingDecision?.active !== undefined) {
+        body.active = editingDecision.active;
+      }
       const response = await fetch(url, {
         method,
         headers: {
