@@ -43,10 +43,10 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<String>> getUsers() {
+    public ResponseEntity<List<Map<String, String>>> getUsers() {
         try {
             File file = getOrCreateFile(USERS_FILE, "[]");
-            List<String> users = objectMapper.readValue(file, List.class);
+            List<Map<String, String>> users = objectMapper.readValue(file, List.class);
             return ResponseEntity.ok(users);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
@@ -54,7 +54,7 @@ public class AdminController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Void> saveUsers(@RequestBody List<String> users) {
+    public ResponseEntity<Void> saveUsers(@RequestBody List<Map<String, String>> users) {
         try {
             objectMapper.writeValue(new File(USERS_FILE), users);
             return ResponseEntity.ok().build();
