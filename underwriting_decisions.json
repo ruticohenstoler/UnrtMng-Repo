@@ -1,1 +1,38 @@
-[{"id":"5a8bccfc-60f1-4ae4-853f-c66e168da774","values":{"underwritingRule":"11","followUpReviewDate":null,"decisionDate":null,"businessTarget":null,"notes":null,"followUpOutcome":null,"recurringReview":null,"decisionImplications":null,"approvingEntities":null,"responsibleForFollowUp":null,"reasonForDecision":null},"lastUpdateDate":[2025,6,23,19,8,7,854664600],"decisionDate":null,"followUpReviewDate":null,"underwritingRule":"11","recurringReview":null,"notes":null,"businessTarget":null,"followUpOutcome":null,"decisionImplications":null,"approvingEntities":null,"responsibleForFollowUp":null,"reasonForDecision":null},{"id":"2aca90d7-765d-428a-937e-0e38f2d87b0f","values":{"responsibleForFollowUp":"שרה לוי","recurringReview":false,"notes":"נדרש מעקב נוסף","underwritingRule":"נכס מסחרי","followUpReviewDate":[2025,8,22],"businessTarget":"נכס מסחרי","reasonForDecision":"אושר עם דרישות אבטחה נוספות","decisionDate":[2025,6,8],"approvingEntities":null,"decisionImplications":null,"followUpOutcome":null},"lastUpdateDate":[2025,6,23,18,18,26,642176300],"decisionDate":[2025,6,8],"followUpReviewDate":[2025,8,22],"underwritingRule":"נכס מסחרי","recurringReview":false,"notes":"נדרש מעקב נוסף","businessTarget":"נכס מסחרי","followUpOutcome":null,"decisionImplications":null,"approvingEntities":null,"responsibleForFollowUp":"שרה לוי","reasonForDecision":"אושר עם דרישות אבטחה נוספות"},{"id":"5ed007ae-b535-4d8d-9ad6-2c9f946ecb1a","values":{"underwritingRule":"פוליסת רכב סטנדרטית1","businessTarget":"1","followUpReviewDate":null,"decisionDate":null,"approvingEntities":null,"reasonForDecision":null,"responsibleForFollowUp":null,"decisionImplications":null,"notes":null,"recurringReview":null,"followUpOutcome":null},"lastUpdateDate":[2025,6,24,13,54,23,490659700],"decisionDate":null,"followUpReviewDate":null,"underwritingRule":"פוליסת רכב סטנדרטית1","recurringReview":null,"notes":null,"businessTarget":"1","followUpOutcome":null,"decisionImplications":null,"approvingEntities":null,"responsibleForFollowUp":null,"reasonForDecision":null}]
+[
+  {
+    "id": "1",
+    "tab": "חיים",
+    "values": {
+      "customerName": "ישראל ישראלי",
+      "policyType": "חיים",
+      "amount": 1000000,
+      "decision": "מאושר"
+    },
+    "lastUpdateDate": "2024-06-01T10:00:00Z",
+    "active": true
+  },
+  {
+    "id": "2",
+    "tab": "רכב",
+    "values": {
+      "customerName": "דנה כהן",
+      "policyType": "רכב",
+      "amount": 50000,
+      "decision": "נדחה"
+    },
+    "lastUpdateDate": "2024-06-02T12:30:00Z",
+    "active": true
+  },
+  {
+    "id": "3",
+    "tab": "דירה",
+    "values": {
+      "customerName": "משה לוי",
+      "policyType": "דירה",
+      "amount": 250000,
+      "decision": "מאושר"
+    },
+    "lastUpdateDate": "2024-06-03T09:15:00Z",
+    "active": false
+  }
+]

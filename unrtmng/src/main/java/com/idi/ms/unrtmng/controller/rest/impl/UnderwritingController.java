@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for underwriting decision management.
@@ -66,10 +67,10 @@ public class UnderwritingController {
     @GetMapping("/decisions")
     public ResponseEntity<List<UnderwritingDecision>> getDecisions(@RequestParam(value = "tab", required = false) String tab) {
         try {
-            String fileName = getDecisionsFileName(tab);
-            File file = getOrCreateFile(fileName, "[]");
-            List<UnderwritingDecision> decisions = objectMapper.readValue(file, new TypeReference<List<UnderwritingDecision>>(){});
-            return ResponseEntity.ok(decisions);
+            File file = getOrCreateFile("underwriting_decisions.json", "[]");
+            List<UnderwritingDecision> allDecisions = objectMapper.readValue(file, new TypeReference<List<UnderwritingDecision>>(){});
+            List<UnderwritingDecision> filtered = (tab == null || tab.isEmpty()) ? allDecisions : allDecisions.stream().filter(d -> tab.equals(d.getTab())).collect(Collectors.toList());
+            return ResponseEntity.ok(filtered);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Collections.emptyList());
         }
@@ -98,11 +99,11 @@ public class UnderwritingController {
     @PostMapping("/decisions")
     public ResponseEntity<Void> addDecision(@RequestParam(value = "tab", required = false) String tab, @RequestBody UnderwritingDecision decision) {
         try {
-            String fileName = getDecisionsFileName(tab);
-            File file = getOrCreateFile(fileName, "[]");
-            List<UnderwritingDecision> decisions = objectMapper.readValue(file, new TypeReference<List<UnderwritingDecision>>(){});
-            decisions.add(decision);
-            objectMapper.writeValue(file, decisions);
+            File file = getOrCreateFile("underwriting_decisions.json", "[]");
+            List<UnderwritingDecision> allDecisions = objectMapper.readValue(file, new TypeReference<List<UnderwritingDecision>>(){});
+            decision.setTab(tab);
+            allDecisions.add(decision);
+            objectMapper.writeValue(file, allDecisions);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
@@ -113,16 +114,25 @@ public class UnderwritingController {
      * Update an existing underwriting decision.
      * 
      * @param id the decision ID
-     * @param decision the updated decision data
-     * @return Mono containing the updated decision
+     * @param updatedDecision the updated decision data
+     * @return ResponseEntity indicating the result of the operation
      */
     @PutMapping("/decisions/{id}")
-    public Mono<ResponseEntity<UnderwritingDecision>> updateDecision(
-            @PathVariable String id, 
-            @RequestBody UnderwritingDecision decision) {
-        return decisionService.updateDecision(UUID.fromString(id), decision)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> updateDecision(@PathVariable String id, @RequestBody UnderwritingDecision updatedDecision) {
+        try {
+            File file = getOrCreateFile("underwriting_decisions.json", "[]");
+            List<UnderwritingDecision> allDecisions = objectMapper.readValue(file, new TypeReference<List<UnderwritingDecision>>(){});
+            for (int i = 0; i < allDecisions.size(); i++) {
+                if (allDecisions.get(i).getId().equals(id)) {
+                    allDecisions.set(i, updatedDecision);
+                    break;
+                }
+            }
+            objectMapper.writeValue(file, allDecisions);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     /**

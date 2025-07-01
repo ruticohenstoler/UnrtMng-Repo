@@ -1,0 +1,222 @@
+{
+  "projectName": "templateApp-Repo",
+  "description": "A full-stack template for dynamic business data management with React (TypeScript) frontend and Spring Boot backend. All business logic is pluggable.",
+  "structure": {
+    "root": [
+      "Dockerfile",
+      "Jenkinsfile",
+      "pom.xml",
+      "README.md",
+      "template_data.json",
+      "templateApp/"
+    ],
+    "templateApp/": [
+      "pom.xml",
+      "src/",
+      "web/"
+    ],
+    "src/": [
+      "main/java/com/company/templateapp/",
+      "main/resources/application.yaml",
+      "test/java/..."
+    ],
+    "main/java/com/company/templateapp/": [
+      "controller/rest/impl/",
+      "bl/service/impl/",
+      "model/",
+      "persistence/"
+    ],
+    "web/": [
+      "babel.config.js",
+      "package.json",
+      "package-lock.json",
+      "proxy.conf.json",
+      "tsconfig.json",
+      "webpack.config.js",
+      "style/",
+      "fonts/"
+    ],
+    "web/style/": [
+      "theme-crm.ts",
+      "CommonThemeModel.tsx"
+    ],
+    "web/fonts/": [
+      "Rubik-Bold.ttf",
+      "Rubik-BoldItalic.ttf",
+      "css/"
+    ],
+    "web/fonts/css/": [
+      "fonts.css"
+    ],
+    "web/apps/templateapp/": [
+      "project.json",
+      "tsconfig.app.json",
+      "src/"
+    ],
+    "web/apps/templateapp/src/": [
+      "assets/",
+      "app/",
+      "index.html",
+      "main.tsx",
+      "polyfills.ts",
+      "setupTests.ts",
+      "styles.css"
+    ],
+    "web/apps/templateapp/src/assets/": [
+      "animation.json"
+    ],
+    "web/apps/templateapp/src/app/": [
+      "components/",
+      "pages/",
+      "App.tsx"
+    ],
+    "web/apps/templateapp/src/app/components/": [
+      "ApiTest.tsx",
+      "__tests__/"
+    ],
+    "web/apps/templateapp/src/app/components/__tests__/": [
+      "ApiTest.test.tsx"
+    ],
+    "web/apps/templateapp/src/app/pages/": [
+      "AboutPage.tsx",
+      "AdminPage.tsx",
+      "ColumnsManagement.tsx",
+      "DecisionsTable.tsx",
+      "HomePage.tsx"
+    ]
+  },
+  "note": "All files under web/apps/templateapp/ are templates for business logic and UI. Replace or extend them according to your business requirements. All other files are infrastructure and configuration files and should not require any changes for a new project.",
+  "backend": {
+    "framework": "Spring Boot (Java)",
+    "javaVersion": "17+",
+    "buildTool": "Maven",
+    "mainDependencies": [
+      "spring-boot-starter-web",
+      "spring-boot-starter-json",
+      "jackson-databind"
+    ],
+    "apiStyle": "REST",
+    "controllers": "Generic REST controllers for CRUD and admin endpoints (tabs, users, data)",
+    "persistence": "All data stored in JSON files in the project root (e.g., template_data_<tab>.json)",
+    "config": "application.yaml for all backend configuration"
+  },
+  "frontend": {
+    "framework": "React",
+    "reactVersion": "18.2.0",
+    "typescriptVersion": "5.1.3",
+    "ui": "Material-UI (MUI), styled-components",
+    "mainDependencies": {
+      "dependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.0",
+        "@mui/icons-material": "5.14.9",
+        "@mui/lab": "5.0.0-alpha.145",
+        "@mui/material": "^5.15.14",
+        "@mui/x-data-grid": "^7.22.0",
+        "@mui/x-date-pickers": "^6.18.4",
+        "date-fns": "^2.30.0",
+        "dayjs": "^1.11.12",
+        "formik": "3.0.0-next.8",
+        "lodash": "4.17.21",
+        "moment": "2.30.1",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-ga4": "2.1.0",
+        "react-gtm-module": "2.0.11",
+        "react-lottie": "^1.2.4",
+        "react-quill": "^2.0.0",
+        "react-router-dom": "6.16.0",
+        "styled-components": "5.3.6",
+        "stylis": "^4.3.1",
+        "stylis-plugin-rtl": "^2.0.2",
+        "typescript": "~5.1.3"
+      },
+      "devDependencies": {
+        "@babel/preset-react": "7.24.7",
+        "@nx/react": "16.8.1",
+        "@nx/webpack": "16.8.1",
+        "@nx/workspace": "16.8.1",
+        "@types/css-mediaquery": "^0.1.4",
+        "@types/lodash": "^4.17.7",
+        "@types/react": "18.2.14",
+        "@types/react-dom": "18.2.6",
+        "@types/react-gtm-module": "2.0.0",
+        "@types/react-is": "18.2.1",
+        "@types/react-router-dom": "5.3.3",
+        "@types/styled-components": "5.1.26",
+        "@types/stylis": "^4.2.6",
+        "nx": "16.8.1",
+        "url-loader": "4.1.1"
+      }
+    },
+    "features": [
+      "Dynamic tabs (loaded from backend)",
+      "Dynamic table per tab",
+      "Column management page",
+      "Admin page for tabs and users",
+      "Logical deletion (active/inactive rows)",
+      "Excel import (xlsx)",
+      "Sorting and filtering per column"
+    ],
+    "apiCommunication": "fetch to backend REST endpoints",
+    "buildSystem": "nx (monorepo), webpack, babel",
+    "projectConfig": {
+      "projectType": "application",
+      "sourceRoot": "web/apps/templateapp/src",
+      "build": {
+        "executor": "@nx/webpack:webpack",
+        "compiler": "babel",
+        "babelConfig": "babel.config.js",
+        "outputPath": "build/dist/templateapp",
+        "main": "apps/templateapp/src/main.tsx",
+        "tsConfig": "apps/templateapp/tsconfig.app.json",
+        "webpackConfig": "webpack.config.js"
+      },
+      "serve": {
+        "executor": "@nx/webpack:dev-server",
+        "proxyConfig": "proxy.conf.json"
+      }
+    },
+    "typescriptConfig": {
+      "compilerOptions": {
+        "jsx": "react",
+        "module": "esnext",
+        "target": "es2015",
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true
+      }
+    },
+    "babelConfig": {
+      "presets": [
+        "@nx/js/babel",
+        "@nx/react/babel"
+      ],
+      "plugins": [
+        ["styled-components", { "pure": true, "ssr": true }]
+      ]
+    },
+    "webpackConfig": "Uses @nx/webpack and @nx/react plugins, extendable via composePlugins"
+  },
+  "deployment": {
+    "docker": true,
+    "jenkins": true,
+    "noExternalDB": true
+  },
+  "systemRequirements": {
+    "node": ">=18",
+    "npm": ">=9",
+    "java": ">=17",
+    "os": "Windows, Linux, MacOS"
+  },
+  "extensibility": {
+    "howToUse": [
+      "Clone the repository",
+      "Change business logic/models via UI or backend (in web/apps/templateapp/)",
+      "Update UI branding as needed",
+      "Deploy via Docker or other methods"
+    ],
+    "templateNote": "All files under web/apps/templateapp/ are templates for business logic and UI. All other files are infrastructure and configuration files and should not require any changes for a new project."
+  }
+} 

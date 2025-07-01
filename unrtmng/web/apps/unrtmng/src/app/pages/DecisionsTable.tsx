@@ -40,6 +40,7 @@ interface ColumnDefinition {
 
 interface UnderwritingDecision {
   id: string;
+  tab: string;
   values: Record<string, any>;
   lastUpdateDate: string;
   active?: boolean;
@@ -141,20 +142,17 @@ const DecisionsTable: React.FC = () => {
       const url = editingDecision 
         ? `/ms/rest/unrtmng/decisions/${editingDecision.id}`
         : '/ms/rest/unrtmng/decisions';
-      
       const method = editingDecision ? 'PUT' : 'POST';
-      
+      const body = editingDecision
+        ? { ...editingDecision, values: formData, tab: selectedTab }
+        : { id: editingDecision?.id, values: formData, tab: selectedTab };
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          id: editingDecision?.id,
-          values: formData
-        })
+        body: JSON.stringify(body)
       });
-
       if (response.ok) {
         setOpenDialog(false);
         await loadData(selectedTab);
@@ -203,7 +201,8 @@ const DecisionsTable: React.FC = () => {
     const decisions = excelData.map((row, index) => ({
       id: `imported_${Date.now()}_${index}`,
       values: row,
-      lastUpdateDate: new Date().toISOString()
+      lastUpdateDate: new Date().toISOString(),
+      tab: selectedTab
     }));
 
     for (const decision of decisions) {
