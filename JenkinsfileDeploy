@@ -1,0 +1,5 @@
+@Library('shared-library') _
+
+def config=["msImageName":"unrt-mng","activeProfile":"crm"]
+
+MicroServiceCD(config)

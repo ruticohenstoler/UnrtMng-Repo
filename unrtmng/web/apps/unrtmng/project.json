@@ -1,0 +1,53 @@
+{
+  "name": "unrtmng",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "web/apps/unrtmng/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "babelConfig": "babel.config.js.txt",
+        "outputPath": "build/dist/crm/unrtmng",
+        "index": "apps/unrtmng/src/index.html",
+        "main": "apps/unrtmng/src/main.tsx.txt",
+        "tsConfig": "apps/unrtmng/tsconfig.app.json",
+       /* "styles": ["apps/underwriting/src/styles.scss"],*/
+        "isolatedConfig": true,
+        "webpackConfig": "webpack.config.js.txt"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "crossOrigin": "use-credentials",
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "unrtmng:build",
+        "proxyConfig": "proxy.conf.json"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "unrtmng:build:development"
+        },
+        "production": {
+          "buildTarget": "unrtmng:build:production"
+        }
+      }
+    }
+  }
+}

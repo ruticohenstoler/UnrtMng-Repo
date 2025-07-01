@@ -1,0 +1,9 @@
+{
+  "/ms/rest/unrtmng": {
+    "target": "http://localhost:8083",
+    "secure": false,
+    "pathRewrite": {
+      "^/ms/rest/unrtmng": " "
+    }
+  }
+}

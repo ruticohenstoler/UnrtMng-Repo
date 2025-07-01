@@ -1,0 +1,39 @@
+/* Set up font for old browsers, only light + regular + bold */
+/*@supports not (font-variation-settings: normal) {*/
+	@font-face {
+		font-family: Rubik;
+		src: url('../Rubik-Light.ttf');
+		font-weight: 300;
+	}
+	@font-face {
+		font-family: Rubik;
+		src: url('../Rubik-Regular.ttf');
+		font-weight: 400;
+	}
+	@font-face {
+		font-family: Rubik;
+		src: url('../Rubik-Medium.ttf');
+		font-weight: 500;
+	}
+	@font-face {
+		font-family: Rubik;
+		src: url('../Rubik-SemiBold.ttf');
+		font-weight: 600;
+	}
+	@font-face {
+		font-family: Rubik;
+		src: url('../Rubik-Bold.ttf');
+		font-weight: 700;
+	}
+
+/*}*/
+
+/* Set up font for modern browsers, all weights */
+/*@supports (font-variation-settings: normal) {*/
+/*	@font-face {*/
+/*		font-family: 'Rubik';*/
+/*		src: url('../Rubik-VariableFont_wght.ttf') format('woff2-variations');*/
+/*		font-weight: 100 900;*/
+/*		font-stretch: 25% 151%;*/
+/*	}*/
+/*}*/
