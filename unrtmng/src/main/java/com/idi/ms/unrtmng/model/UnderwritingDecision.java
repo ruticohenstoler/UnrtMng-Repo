@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * מודל מייצג החלטת חיתום.
  * 
  * המודל תומך בעמודות דינמיות באמצעות Map של ערכים.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UnderwritingDecision {
     
     private UUID id;
