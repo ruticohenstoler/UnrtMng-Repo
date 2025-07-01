@@ -2,8 +2,9 @@ import React from 'react';
 import {BrowserRouter, Routes, Route, Link} from 'react-router-dom';
 import {CssBaseline, AppBar, Toolbar, Typography, Container, Button, Box} from '@mui/material';
 import styled, {ThemeProvider} from 'styled-components';
-import DecisionsTable from './pages/DecisionsTable.tsx.txt';
-import ColumnsManagement from './pages/ColumnsManagement.tsx.txt';
+import DecisionsTable from './pages/DecisionsTable.tsx';
+import ColumnsManagement from './pages/ColumnsManagement.tsx';
+import AdminPage from './pages/AdminPage';
 
 const StyledContainer = styled(Container)`
     margin-top: 2rem;
@@ -23,6 +24,9 @@ const App: React.FC = () => (
                     <Button color="inherit" component={Link} to="/columns">
                         ניהול עמודות
                     </Button>
+                    <Button color="inherit" component={Link} to="/admin">
+                        ניהול מערכת
+                    </Button>
                 </Box>
             </Toolbar>
         </AppBar>
@@ -30,6 +34,7 @@ const App: React.FC = () => (
             <Routes>
                 <Route path="/" element={<DecisionsTable/>}/>
                 <Route path="/columns" element={<ColumnsManagement/>}/>
+                <Route path="/admin" element={<AdminPage/>}/>
             </Routes>
         </StyledContainer>
     </>

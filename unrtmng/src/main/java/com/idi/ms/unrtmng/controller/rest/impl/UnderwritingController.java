@@ -1,5 +1,7 @@
 package com.idi.ms.unrtmng.controller.rest.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.idi.ms.unrtmng.bl.service.impl.ColumnDefinitionService;
 import com.idi.ms.unrtmng.bl.service.impl.UnderwritingDecisionService;
 import com.idi.ms.unrtmng.model.ColumnDefinition;
@@ -10,6 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,12 +33,15 @@ public class UnderwritingController {
 
     private final UnderwritingDecisionService decisionService;
     private final ColumnDefinitionService columnService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public UnderwritingController(UnderwritingDecisionService decisionService,
-								  ColumnDefinitionService columnService) {
+								  ColumnDefinitionService columnService,
+								  ObjectMapper objectMapper) {
         this.decisionService = decisionService;
         this.columnService = columnService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -54,8 +64,15 @@ public class UnderwritingController {
      * @return Flux of all decisions
      */
     @GetMapping("/decisions")
-    public Flux<UnderwritingDecision> getAllDecisions() {
-        return decisionService.getAllDecisions();
+    public ResponseEntity<List<UnderwritingDecision>> getDecisions(@RequestParam(value = "tab", required = false) String tab) {
+        try {
+            String fileName = getDecisionsFileName(tab);
+            File file = getOrCreateFile(fileName, "[]");
+            List<UnderwritingDecision> decisions = objectMapper.readValue(file, new TypeReference<List<UnderwritingDecision>>(){});
+            return ResponseEntity.ok(decisions);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Collections.emptyList());
+        }
     }
 
     /**
@@ -74,13 +91,22 @@ public class UnderwritingController {
     /**
      * Create a new underwriting decision.
      * 
+     * @param tab the tab for the decision
      * @param decision the decision to create
-     * @return Mono containing the created decision
+     * @return ResponseEntity indicating the result of the operation
      */
     @PostMapping("/decisions")
-    public Mono<ResponseEntity<UnderwritingDecision>> createDecision(@RequestBody UnderwritingDecision decision) {
-        return decisionService.createDecision(decision)
-                .map(ResponseEntity::ok);
+    public ResponseEntity<Void> addDecision(@RequestParam(value = "tab", required = false) String tab, @RequestBody UnderwritingDecision decision) {
+        try {
+            String fileName = getDecisionsFileName(tab);
+            File file = getOrCreateFile(fileName, "[]");
+            List<UnderwritingDecision> decisions = objectMapper.readValue(file, new TypeReference<List<UnderwritingDecision>>(){});
+            decisions.add(decision);
+            objectMapper.writeValue(file, decisions);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     /**
@@ -194,5 +220,20 @@ public class UnderwritingController {
         return columnService.deleteColumn(UUID.fromString(id))
                 .map(deleted -> ResponseEntity.ok(Map.of("deleted", deleted)))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    private String getDecisionsFileName(String tab) {
+        if (tab == null || tab.isEmpty()) return "underwriting_decisions.json";
+        return "underwriting_decisions_" + tab + ".json";
+    }
+
+    private File getOrCreateFile(String filename, String defaultContent) throws IOException {
+        File file = new File(filename);
+        if (!file.exists()) {
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write(defaultContent);
+            }
+        }
+        return file;
     }
 } 

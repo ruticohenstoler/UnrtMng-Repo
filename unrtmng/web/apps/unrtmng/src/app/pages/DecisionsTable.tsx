@@ -17,12 +17,15 @@ import {
   Typography,
   Box,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Tabs,
+  Tab
 } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Upload as UploadIcon } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import * as XLSX from 'xlsx';
 //import { he } from 'date-fns/locale';
 
 interface ColumnDefinition {
@@ -39,27 +42,46 @@ interface UnderwritingDecision {
   id: string;
   values: Record<string, any>;
   lastUpdateDate: string;
+  active?: boolean;
 }
 
 const DecisionsTable: React.FC = () => {
   const [decisions, setDecisions] = useState<UnderwritingDecision[]>([]);
   const [columns, setColumns] = useState<ColumnDefinition[]>([]);
+  const [tabs, setTabs] = useState<string[]>([]);
+  const [selectedTab, setSelectedTab] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingDecision, setEditingDecision] = useState<UnderwritingDecision | null>(null);
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [showInactive, setShowInactive] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    loadData();
+    fetch('/ms/rest/unrtmng/admin/tabs')
+      .then(r => r.ok ? r.json() : [])
+      .then((data) => {
+        setTabs(data);
+        setSelectedTab(data[0] || '');
+      });
   }, []);
 
-  const loadData = async () => {
+  useEffect(() => {
+    if (selectedTab) {
+      loadData(selectedTab);
+    }
+  }, [selectedTab]);
+
+  const loadData = async (tabName: string) => {
     try {
       setLoading(true);
       const [columnsResponse, decisionsResponse] = await Promise.all([
         fetch('/ms/rest/unrtmng/columns/visible'),
-        fetch('/ms/rest/unrtmng/decisions')
+        fetch(`/ms/rest/unrtmng/decisions?tab=${encodeURIComponent(tabName)}`)
       ]);
 
       if (!columnsResponse.ok || !decisionsResponse.ok) {
@@ -94,14 +116,18 @@ const DecisionsTable: React.FC = () => {
     if (!window.confirm('האם אתה בטוח שברצונך למחוק החלטה זו?')) {
       return;
     }
-
     try {
+      // שליפת ההחלטה לעדכון
+      const decision = decisions.find(d => d.id === id);
+      if (!decision) throw new Error('החלטה לא נמצאה');
+      const updated = { ...decision, active: false };
       const response = await fetch(`/ms/rest/unrtmng/decisions/${id}`, {
-        method: 'DELETE'
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
       });
-
       if (response.ok) {
-        await loadData();
+        await loadData(selectedTab);
       } else {
         throw new Error('שגיאה במחיקת החלטה');
       }
@@ -131,13 +157,64 @@ const DecisionsTable: React.FC = () => {
 
       if (response.ok) {
         setOpenDialog(false);
-        await loadData();
+        await loadData(selectedTab);
       } else {
         throw new Error('שגיאה בשמירת החלטה');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'שגיאה לא ידועה');
     }
+  };
+
+  const handleImportExcel = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const data = await readExcelFile(file);
+      await importDecisions(data);
+      event.target.value = '';
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'שגיאה בייבוא קובץ אקסל');
+    }
+  };
+
+  const readExcelFile = (file: File): Promise<any[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target?.result as ArrayBuffer);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
+          resolve(jsonData);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const importDecisions = async (excelData: any[]) => {
+    const decisions = excelData.map((row, index) => ({
+      id: `imported_${Date.now()}_${index}`,
+      values: row,
+      lastUpdateDate: new Date().toISOString()
+    }));
+
+    for (const decision of decisions) {
+      await fetch(`/ms/rest/unrtmng/decisions?tab=${encodeURIComponent(selectedTab)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(decision)
+      });
+    }
+
+    await loadData(selectedTab);
   };
 
   const renderCell = (decision: UnderwritingDecision, column: ColumnDefinition) => {
@@ -202,6 +279,40 @@ const DecisionsTable: React.FC = () => {
     }
   };
 
+  const handleSort = (columnName: string) => {
+    if (sortBy === columnName) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(columnName);
+      setSortDirection('asc');
+    }
+  };
+
+  const handleSearchChange = (columnName: string, value: string) => {
+    setSearchTerms(prev => ({ ...prev, [columnName]: value }));
+  };
+
+  const filteredDecisions = decisions
+    .filter(decision => showInactive ? decision.active === false : decision.active !== false)
+    .filter(decision =>
+      columns.every(col => {
+        const term = searchTerms[col.name]?.toLowerCase() || '';
+        if (!term) return true;
+        const value = String(decision.values[col.name] ?? '').toLowerCase();
+        return value.includes(term);
+      })
+    );
+
+  const sortedDecisions = sortBy
+    ? [...filteredDecisions].sort((a, b) => {
+        const aValue = a.values[sortBy] ?? '';
+        const bValue = b.values[sortBy] ?? '';
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      })
+    : filteredDecisions;
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -212,15 +323,41 @@ const DecisionsTable: React.FC = () => {
 
   return (
     <Box>
+      <Tabs
+        value={selectedTab}
+        onChange={(_, v) => setSelectedTab(v)}
+        sx={{ mb: 2 }}
+        variant="scrollable"
+        scrollButtons="auto"
+      >
+        {tabs.map(tab => (
+          <Tab key={tab} value={tab} label={tab} />
+        ))}
+      </Tabs>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4">ניהול החלטות חיתום</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleAdd}
-        >
-          הוספת החלטה
-        </Button>
+        <Box display="flex" gap={2}>
+          <Button
+            variant="outlined"
+            startIcon={<UploadIcon />}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            ייבוא מאקסל
+          </Button>
+          <Button
+            variant={showInactive ? "contained" : "outlined"}
+            onClick={() => setShowInactive(!showInactive)}
+          >
+            {showInactive ? 'הצג פעילים' : 'הצג לא פעילים'}
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleAdd}
+          >
+            הוספת החלטה
+          </Button>
+        </Box>
       </Box>
 
       {error && (
@@ -234,16 +371,34 @@ const DecisionsTable: React.FC = () => {
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell key={column.id}>
+                <TableCell key={column.id} onClick={() => handleSort(column.name)} style={{ cursor: 'pointer' }}>
                   {column.displayName}
+                  {sortBy === column.name && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
                 </TableCell>
               ))}
               <TableCell>פעולות</TableCell>
             </TableRow>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell key={column.id}>
+                  <TextField
+                    size="small"
+                    placeholder="חיפוש..."
+                    value={searchTerms[column.name] || ''}
+                    onChange={e => handleSearchChange(column.name, e.target.value)}
+                    fullWidth
+                  />
+                </TableCell>
+              ))}
+              <TableCell />
+            </TableRow>
           </TableHead>
           <TableBody>
-            {decisions.map((decision) => (
-              <TableRow key={decision.id}>
+            {sortedDecisions.map((decision) => (
+              <TableRow key={decision.id} sx={{
+                opacity: decision.active === false ? 0.6 : 1,
+                backgroundColor: decision.active === false ? '#f5f5f5' : 'inherit'
+              }}>
                 {columns.map((column) => (
                   <TableCell key={column.id}>
                     {renderCell(decision, column)}
@@ -262,6 +417,14 @@ const DecisionsTable: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        accept=".xlsx,.xls"
+        onChange={handleImportExcel}
+      />
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
         <DialogTitle>
