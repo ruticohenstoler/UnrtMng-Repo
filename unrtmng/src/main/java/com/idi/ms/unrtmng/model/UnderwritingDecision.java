@@ -16,6 +16,7 @@ public class UnderwritingDecision {
     private UUID id;
     private Map<String, Object> values;
     private LocalDateTime lastUpdateDate;
+    private String tab;
     
     // Constructors
     public UnderwritingDecision() {
@@ -52,6 +53,14 @@ public class UnderwritingDecision {
     
     public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+    
+    public String getTab() {
+        return tab;
+    }
+    
+    public void setTab(String tab) {
+        this.tab = tab;
     }
     
     // Helper methods for common fields
