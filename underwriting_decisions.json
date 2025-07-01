@@ -1,7 +1,7 @@
 [
   {
     "id": "1",
-    "tab": "חיים",
+    "tab": "life",
     "values": {
       "customerName": "ישראל ישראלי",
       "policyType": "חיים",
@@ -13,7 +13,7 @@
   },
   {
     "id": "2",
-    "tab": "רכב",
+    "tab": "car",
     "values": {
       "customerName": "דנה כהן",
       "policyType": "רכב",
@@ -25,7 +25,7 @@
   },
   {
     "id": "3",
-    "tab": "דירה",
+    "tab": "home",
     "values": {
       "customerName": "משה לוי",
       "policyType": "דירה",

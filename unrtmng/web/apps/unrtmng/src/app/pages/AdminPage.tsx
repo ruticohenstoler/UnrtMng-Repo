@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-const initialTabs = ['חיים', 'רכב', 'דירה'];
+type TabDef = { id: string; name: string };
+const initialTabs: TabDef[] = [
+  { id: 'life', name: 'חיים' },
+  { id: 'car', name: 'רכב' },
+  { id: 'home', name: 'דירה' }
+];
 
 export default function AdminPage() {
-  const [tabs, setTabs] = useState<string[]>(initialTabs);
-  const [newTab, setNewTab] = useState('');
+  const [tabs, setTabs] = useState<TabDef[]>(initialTabs);
+  const [newTabName, setNewTabName] = useState('');
+  const [newTabId, setNewTabId] = useState('');
   const [users, setUsers] = useState<string[]>([]);
   const [newUser, setNewUser] = useState('');
   const [loading, setLoading] = useState(false);
@@ -57,14 +63,15 @@ export default function AdminPage() {
   };
 
   const addTab = () => {
-    if (newTab && !tabs.includes(newTab)) {
-      setTabs([...tabs, newTab]);
-      setNewTab('');
+    if (newTabId && newTabName && !tabs.some(t => t.id === newTabId)) {
+      setTabs([...tabs, { id: newTabId, name: newTabName }]);
+      setNewTabId('');
+      setNewTabName('');
     }
   };
 
-  const removeTab = (tab: string) => {
-    setTabs(tabs.filter(t => t !== tab));
+  const removeTab = (id: string) => {
+    setTabs(tabs.filter(t => t.id !== id));
   };
 
   const addUser = () => {
@@ -86,18 +93,24 @@ export default function AdminPage() {
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         <input
           type="text"
-          placeholder="הוסף טאב"
-          value={newTab}
-          onChange={e => setNewTab(e.target.value)}
+          placeholder="מזהה טאב (אנגלית)"
+          value={newTabId}
+          onChange={e => setNewTabId(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="שם טאב (בעברית)"
+          value={newTabName}
+          onChange={e => setNewTabName(e.target.value)}
         />
         <button onClick={addTab}>הוסף</button>
         <button onClick={saveTabs}>שמור טאבים</button>
       </div>
       <ul>
         {tabs.map(tab => (
-          <li key={tab} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>{tab}</span>
-            <button onClick={() => removeTab(tab)}>הסר</button>
+          <li key={tab.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>{tab.name} ({tab.id})</span>
+            <button onClick={() => removeTab(tab.id)}>הסר</button>
           </li>
         ))}
       </ul>

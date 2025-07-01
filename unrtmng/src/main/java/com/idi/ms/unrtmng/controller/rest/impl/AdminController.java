@@ -10,21 +10,22 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/ms/rest/unrtmng/admin")
+@RequestMapping("/admin")
 public class AdminController {
     private static final String TABS_FILE = "tabs.json";
     private static final String USERS_FILE = "users.json";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/tabs")
-    public ResponseEntity<List<String>> getTabs() {
+    public ResponseEntity<List<Map<String, String>>> getTabs() {
         try {
-            File file = getOrCreateFile(TABS_FILE, "[\"חיים\",\"רכב\",\"דירה\"]");
-            List<String> tabs = objectMapper.readValue(file, List.class);
+            File file = getOrCreateFile(TABS_FILE, "[{\"id\":\"life\",\"name\":\"חיים\"},{\"id\":\"car\",\"name\":\"רכב\"},{\"id\":\"home\",\"name\":\"דירה\"}]");
+            List<Map<String, String>> tabs = objectMapper.readValue(file, List.class);
             return ResponseEntity.ok(tabs);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
@@ -32,7 +33,7 @@ public class AdminController {
     }
 
     @PostMapping("/tabs")
-    public ResponseEntity<Void> saveTabs(@RequestBody List<String> tabs) {
+    public ResponseEntity<Void> saveTabs(@RequestBody List<Map<String, String>> tabs) {
         try {
             objectMapper.writeValue(new File(TABS_FILE), tabs);
             return ResponseEntity.ok().build();

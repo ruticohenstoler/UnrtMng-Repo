@@ -46,11 +46,13 @@ interface UnderwritingDecision {
   active?: boolean;
 }
 
+type TabDef = { id: string; name: string };
+
 const DecisionsTable: React.FC = () => {
   const [decisions, setDecisions] = useState<UnderwritingDecision[]>([]);
   const [columns, setColumns] = useState<ColumnDefinition[]>([]);
-  const [tabs, setTabs] = useState<string[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>('');
+  const [tabs, setTabs] = useState<TabDef[]>([]);
+  const [selectedTab, setSelectedTab] = useState<TabDef | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -67,22 +69,22 @@ const DecisionsTable: React.FC = () => {
       .then(r => r.ok ? r.json() : [])
       .then((data) => {
         setTabs(data);
-        setSelectedTab(data[0] || '');
+        setSelectedTab(data[0] || null);
       });
   }, []);
 
   useEffect(() => {
     if (selectedTab) {
-      loadData(selectedTab);
+      loadData(selectedTab.id);
     }
   }, [selectedTab]);
 
-  const loadData = async (tabName: string) => {
+  const loadData = async (tabId: string) => {
     try {
       setLoading(true);
       const [columnsResponse, decisionsResponse] = await Promise.all([
         fetch('/ms/rest/unrtmng/columns/visible'),
-        fetch(`/ms/rest/unrtmng/decisions?tab=${encodeURIComponent(tabName)}`)
+        fetch(`/ms/rest/unrtmng/decisions?tab=${encodeURIComponent(tabId)}`)
       ]);
 
       if (!columnsResponse.ok || !decisionsResponse.ok) {
@@ -128,7 +130,7 @@ const DecisionsTable: React.FC = () => {
         body: JSON.stringify(updated)
       });
       if (response.ok) {
-        await loadData(selectedTab);
+        await loadData(selectedTab?.id || '');
       } else {
         throw new Error('שגיאה במחיקת החלטה');
       }
@@ -138,14 +140,15 @@ const DecisionsTable: React.FC = () => {
   };
 
   const handleSave = async () => {
+    if (!selectedTab) return;
     try {
       const url = editingDecision 
         ? `/ms/rest/unrtmng/decisions/${editingDecision.id}`
         : '/ms/rest/unrtmng/decisions';
       const method = editingDecision ? 'PUT' : 'POST';
       const body = editingDecision
-        ? { ...editingDecision, values: formData, tab: selectedTab }
-        : { id: editingDecision?.id, values: formData, tab: selectedTab };
+        ? { ...editingDecision, values: formData, tab: selectedTab.id }
+        : { id: editingDecision?.id, values: formData, tab: selectedTab.id };
       const response = await fetch(url, {
         method,
         headers: {
@@ -155,7 +158,7 @@ const DecisionsTable: React.FC = () => {
       });
       if (response.ok) {
         setOpenDialog(false);
-        await loadData(selectedTab);
+        await loadData(selectedTab.id);
       } else {
         throw new Error('שגיאה בשמירת החלטה');
       }
@@ -198,22 +201,23 @@ const DecisionsTable: React.FC = () => {
   };
 
   const importDecisions = async (excelData: any[]) => {
+    if (!selectedTab) return;
     const decisions = excelData.map((row, index) => ({
       id: `imported_${Date.now()}_${index}`,
       values: row,
       lastUpdateDate: new Date().toISOString(),
-      tab: selectedTab
+      tab: selectedTab.id
     }));
 
     for (const decision of decisions) {
-      await fetch(`/ms/rest/unrtmng/decisions?tab=${encodeURIComponent(selectedTab)}`, {
+      await fetch(`/ms/rest/unrtmng/decisions?tab=${encodeURIComponent(selectedTab.id)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(decision)
       });
     }
 
-    await loadData(selectedTab);
+    await loadData(selectedTab.id);
   };
 
   const renderCell = (decision: UnderwritingDecision, column: ColumnDefinition) => {
@@ -323,14 +327,14 @@ const DecisionsTable: React.FC = () => {
   return (
     <Box>
       <Tabs
-        value={selectedTab}
-        onChange={(_, v) => setSelectedTab(v)}
+        value={selectedTab?.id || ''}
+        onChange={(_, v) => setSelectedTab(tabs.find(t => t.id === v) || null)}
         sx={{ mb: 2 }}
         variant="scrollable"
         scrollButtons="auto"
       >
         {tabs.map(tab => (
-          <Tab key={tab} value={tab} label={tab} />
+          <Tab key={tab.id} value={tab.id} label={tab.name} />
         ))}
       </Tabs>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
