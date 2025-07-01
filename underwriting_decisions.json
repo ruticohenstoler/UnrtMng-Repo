@@ -1,6 +1,15 @@
 [
   {
-    "id": "1",
+    "id": "b1a7e8b2-1234-4c2a-9e2a-123456789abc",
+    "tab": "life",
+    "values": {
+      "decisionDate": "2024-05-01",
+      "underwritingRule": "כלל 1"
+    },
+    "lastUpdateDate": "2024-06-01T12:00:00"
+  },
+  {
+    "id": "e2c1a7b4-1111-4c2a-9e2a-000000000001",
     "tab": "life",
     "values": {
       "customerName": "ישראל ישראלי",
@@ -8,11 +17,10 @@
       "amount": 1000000,
       "decision": "מאושר"
     },
-    "lastUpdateDate": "2024-06-01T10:00:00Z",
-    "active": true
+    "lastUpdateDate": "2024-06-01T10:00:00Z"
   },
   {
-    "id": "2",
+    "id": "e2c1a7b4-1111-4c2a-9e2a-000000000002",
     "tab": "car",
     "values": {
       "customerName": "דנה כהן",
@@ -20,11 +28,10 @@
       "amount": 50000,
       "decision": "נדחה"
     },
-    "lastUpdateDate": "2024-06-02T12:30:00Z",
-    "active": true
+    "lastUpdateDate": "2024-06-02T12:30:00Z"
   },
   {
-    "id": "3",
+    "id": "e2c1a7b4-1111-4c2a-9e2a-000000000003",
     "tab": "home",
     "values": {
       "customerName": "משה לוי",
@@ -32,7 +39,6 @@
       "amount": 250000,
       "decision": "מאושר"
     },
-    "lastUpdateDate": "2024-06-03T09:15:00Z",
-    "active": false
+    "lastUpdateDate": "2024-06-03T09:15:00Z"
   }
 ]
