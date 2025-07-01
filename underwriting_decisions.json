@@ -4,41 +4,50 @@
     "tab": "life",
     "values": {
       "decisionDate": "2024-05-01",
-      "underwritingRule": "כלל 1"
-    },
-    "lastUpdateDate": "2024-06-01T12:00:00"
+      "underwritingRule": "כלל 1",
+      "reasonForDecision": "סיכון נמוך",
+      "approvingEntities": "מנהל ראשי",
+      "decisionImplications": "אישור מלא",
+      "followUpReviewDate": "2024-12-01",
+      "businessTarget": "יעד חיים",
+      "responsibleForFollowUp": "דני",
+      "followUpOutcome": "החלטה נשמרה",
+      "recurringReview": false,
+      "notes": "אין"
+    }
   },
   {
     "id": "e2c1a7b4-1111-4c2a-9e2a-000000000001",
-    "tab": "life",
+    "tab": "car",
     "values": {
-      "customerName": "ישראל ישראלי",
-      "policyType": "חיים",
-      "amount": 1000000,
-      "decision": "מאושר"
-    },
-    "lastUpdateDate": "2024-06-01T10:00:00Z"
+      "decisionDate": "2024-04-15",
+      "underwritingRule": "כלל רכב",
+      "reasonForDecision": "עבר ביטוחי תקין",
+      "approvingEntities": "סוכן רכב",
+      "decisionImplications": "אישור חלקי",
+      "followUpReviewDate": "2024-10-01",
+      "businessTarget": "יעד רכב",
+      "responsibleForFollowUp": "שרה",
+      "followUpOutcome": "נדרש מעקב",
+      "recurringReview": true,
+      "notes": "בדוק מסמכים נוספים"
+    }
   },
   {
     "id": "e2c1a7b4-1111-4c2a-9e2a-000000000002",
-    "tab": "car",
-    "values": {
-      "customerName": "דנה כהן",
-      "policyType": "רכב",
-      "amount": 50000,
-      "decision": "נדחה"
-    },
-    "lastUpdateDate": "2024-06-02T12:30:00Z"
-  },
-  {
-    "id": "e2c1a7b4-1111-4c2a-9e2a-000000000003",
     "tab": "home",
     "values": {
-      "customerName": "משה לוי",
-      "policyType": "דירה",
-      "amount": 250000,
-      "decision": "מאושר"
-    },
-    "lastUpdateDate": "2024-06-03T09:15:00Z"
+      "decisionDate": "2024-03-10",
+      "underwritingRule": "כלל דירה",
+      "reasonForDecision": "נזקי מים קודמים",
+      "approvingEntities": "מנהל דירות",
+      "decisionImplications": "אישור מותנה",
+      "followUpReviewDate": "2024-09-01",
+      "businessTarget": "יעד דירה",
+      "responsibleForFollowUp": "מיכל",
+      "followUpOutcome": "החלטה נדחתה",
+      "recurringReview": false,
+      "notes": "נדרש ביקור שמאי"
+    }
   }
 ]
