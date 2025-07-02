@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './app/App.tsx.txt';
+import App from './app/App.tsx';
 import ThemeCrmTs from '../../../style/theme-crm';
 import {CacheProvider} from '@emotion/react';
 import createCache from '@emotion/cache';

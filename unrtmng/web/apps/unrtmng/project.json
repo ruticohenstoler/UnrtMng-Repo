@@ -9,14 +9,14 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "babelConfig": "babel.config.js.txt",
+        "babelConfig": "babel.config.js",
         "outputPath": "build/dist/crm/unrtmng",
         "index": "apps/unrtmng/src/index.html",
-        "main": "apps/unrtmng/src/main.tsx.txt",
+        "main": "apps/unrtmng/src/main.tsx",
         "tsConfig": "apps/unrtmng/tsconfig.app.json",
        /* "styles": ["apps/underwriting/src/styles.scss"],*/
         "isolatedConfig": true,
-        "webpackConfig": "webpack.config.js.txt"
+        "webpackConfig": "webpack.config.js"
       },
       "configurations": {
         "development": {

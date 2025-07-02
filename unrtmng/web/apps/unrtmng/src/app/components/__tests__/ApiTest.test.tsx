@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ApiTest from '../ApiTest.tsx,txt';
+import ApiTest from '../ApiTest.tsx';
 
 // Mock fetch globally
 global.fetch = jest.fn();

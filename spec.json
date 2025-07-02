@@ -248,5 +248,49 @@
         ]
       }
     }
+  },
+  "utilityClasses": {
+    "java": {
+      "rule": "Use the utility classes DateUtil, StringUtils, and FileUtil wherever relevant (date handling, string manipulation, file operations) instead of implementing new helper functions.",
+      "examples": [
+        "import com.idi.plugin.util.DateUtil;",
+        "String pattern = DateUtil.DATE_FORMAT_PATTERN;",
+        "import com.idi.plugin.util.StringUtils;",
+        "String trimmed = StringUtils.trim(myString);",
+        "import com.idi.plugin.util.FileUtil;",
+        "FileUtil.createFile(path, fileName);"
+      ],
+      "classes": [
+        {
+          "name": "DateUtil",
+          "description": "A static class that defines a unified date format for the entire system.",
+          "fields": [
+            {
+              "name": "DATE_FORMAT_PATTERN",
+              "type": "String",
+              "description": "Default date format: yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            }
+          ]
+        },
+        {
+          "name": "StringUtils",
+          "description": "Utility class for string operations (e.g., trim, isEmpty, etc.)."
+        },
+        {
+          "name": "FileUtil",
+          "description": "Utility class for file operations (e.g., creating files/directories).",
+          "methods": [
+            {
+              "name": "createFile",
+              "description": "Creates a file in the given directory.",
+              "params": [
+                { "name": "pathToDirectory", "type": "String" },
+                { "name": "fileName", "type": "String" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   }
 } 

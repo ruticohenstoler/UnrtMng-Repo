@@ -1,6 +1,6 @@
-import {  ThemeOption } from './CommonThemeModel.tsx.txt';
+import {  ThemeOption } from './CommonThemeModel.tsx';
 import { createTheme } from '@mui/material';
-import '../fonts/css/fonts.css.txt';
+import '../fonts/css/fonts.css';
 
 const theme = ThemeOption;
 const muiTheme = createTheme(theme, {});
