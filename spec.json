@@ -292,5 +292,36 @@
         }
       ]
     }
+  },
+  "databaseAccess": {
+    "java": {
+      "rule": "For any database connection or data access logic, use the provided classes: AbstractDal, MongoDal, MssqlDal, and SybaseDal as appropriate. Do not implement new DAL (Data Access Layer) classes; always use these standard classes.",
+      "examples": [
+        "import com.idi.plugin.dal.AbstractDal;",
+        "import com.idi.plugin.dal.MongoDal;",
+        "import com.idi.plugin.dal.MssqlDal;",
+        "import com.idi.plugin.dal.SybaseDal;",
+        "AbstractDal dal = new MssqlDal(connectionString);",
+        "dal.query(\"SELECT * FROM users\");"
+      ],
+      "classes": [
+        {
+          "name": "AbstractDal",
+          "description": "Base class for all Data Access Layer (DAL) implementations. Provides common interface for database operations."
+        },
+        {
+          "name": "MongoDal",
+          "description": "DAL implementation for MongoDB databases. Inherit from AbstractDal."
+        },
+        {
+          "name": "MssqlDal",
+          "description": "DAL implementation for Microsoft SQL Server databases. Inherit from AbstractDal."
+        },
+        {
+          "name": "SybaseDal",
+          "description": "DAL implementation for Sybase databases. Inherit from AbstractDal."
+        }
+      ]
+    }
   }
 } 
