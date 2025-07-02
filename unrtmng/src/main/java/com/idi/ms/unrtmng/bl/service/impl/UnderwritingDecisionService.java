@@ -7,6 +7,7 @@ import com.idi.ms.unrtmng.model.UnderwritingDecision;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import com.idi.plugin.factory.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -130,7 +131,7 @@ public class UnderwritingDecisionService {
         try {
             objectMapper.writeValue(new File(DATA_FILE), new ArrayList<>(decisions.values()));
         } catch (IOException e) {
-            System.err.println("שגיאה בשמירת נתונים לקובץ: " + e.getMessage());
+            Logger.error("שגיאה בשמירת נתונים לקובץ: " + e.getMessage(), e);
         }
     }
     
@@ -146,9 +147,9 @@ public class UnderwritingDecisionService {
                     new TypeReference<List<UnderwritingDecision>>() {}
                 );
                 loadedDecisions.forEach(decision -> decisions.put(decision.getId(), decision));
-                System.out.println("נטענו " + loadedDecisions.size() + " החלטות מקובץ");
+                Logger.info("נטענו " + loadedDecisions.size() + " החלטות מקובץ");
             } catch (IOException e) {
-                System.err.println("שגיאה בטעינת נתונים מקובץ: " + e.getMessage());
+                Logger.error("שגיאה בטעינת נתונים מקובץ: " + e.getMessage(), e);
                 initializeSampleData();
             }
         } else {
@@ -163,7 +164,7 @@ public class UnderwritingDecisionService {
         List<UnderwritingDecision> sampleDecisions = createSampleDecisions();
         sampleDecisions.forEach(decision -> decisions.put(decision.getId(), decision));
         saveDataToFile();
-        System.out.println("אותחלו " + sampleDecisions.size() + " החלטות לדוגמה");
+        Logger.info("אותחלו " + sampleDecisions.size() + " החלטות לדוגמה");
     }
     
     private List<UnderwritingDecision> createSampleDecisions() {

@@ -218,5 +218,35 @@
       "Deploy via Docker or other methods"
     ],
     "templateNote": "All files under web/apps/templateapp/ are templates for business logic and UI. All other files are infrastructure and configuration files and should not require any changes for a new project."
+  },
+  "logging": {
+    "java": {
+      "rule": "כל הדפסה למסך (System.out/err/println) או לוגינג אחר תתבצע אך ורק דרך Logger.info/Logger.error. יש להוסיף import com.idi.plugin.factory.logger.Logger בראש כל קובץ Java שבו יש לוגינג.",
+      "example": [
+        "Logger.info(\"הודעת מידע\");",
+        "Logger.error(\"שגיאת מערכת\", e);"
+      ],
+      "class": {
+        "name": "Logger",
+        "description": "מחלקה סטטית ללוגינג. מאפשרת כתיבת הודעות לוג ברמות שונות.",
+        "methods": [
+          {
+            "name": "info",
+            "description": "כתיבת הודעת מידע ללוג.",
+            "params": [
+              { "name": "message", "type": "String", "description": "ההודעה" }
+            ]
+          },
+          {
+            "name": "error",
+            "description": "כתיבת הודעת שגיאה ללוג.",
+            "params": [
+              { "name": "message", "type": "String", "description": "ההודעה" },
+              { "name": "exception", "type": "Throwable", "description": "אובייקט חריגה (לא חובה)" }
+            ]
+          }
+        ]
+      }
+    }
   }
 } 
